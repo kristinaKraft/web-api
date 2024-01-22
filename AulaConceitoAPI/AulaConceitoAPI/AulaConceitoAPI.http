@@ -1,0 +1,6 @@
+@AulaConceitoAPI_HostAddress = http://localhost:5201
+
+GET {{AulaConceitoAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

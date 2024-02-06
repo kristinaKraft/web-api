@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./estilos/style.css">
+    <title>Consulta de Produtos</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        div {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0.555, 0.555);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            color: #000;
+        }
+
+        h1 {
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #c548ff;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #c548ff;
+            color: #000;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>Listar Produtos</h1>
+        <button onclick="carregar()">Carregar</button>
+        <button onclick="inserir()">Inserir</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCorpo">
+                <!--Preencher via javascript-->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        async function inserir() {
+            let obj = {
+                 nome: "feijão",
+                 descricao: "preto ",
+                 preco: "10",
+                quantidade: "15"
+            }
+
+            let token = localStorage.getItem('login')
+            if (token == null) {
+                window.location.href = './login.html'
+            }
+
+            console.log(obj)
+            await fetch('https://localhost:7193/api/produtos', {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(obj)
+            });
+
+           // carregar();
+        }
+
+        async function carregar() {
+            let token = localStorage.getItem('login')
+            if (token == null) {
+                window.location.href = './login.html'
+            }
+            const tabelaCorpo = document.getElementById("tabelaCorpo");
+            tabelaCorpo.innerHTML = '';
+
+            fetch('https://localhost:7193/api/produtos', {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+                .then(dados => dados.json())
+                .then(resposta => {
+                    console.log(resposta)
+                    resposta.forEach(element => {
+                        const linha = document.createElement("tr");
+                        linha.innerHTML = `<td>${element.id}</td><td>${element.nome}</td><td>${element.descricao}</td><td>${element.preco}</td><td>${element.quantidade}</td>
+                    <td><a href='./editarProdutos.html?id=${element.id}' >editar</a></td>
+                    <td><a href='./excluirProdutos.html?id=${element.id}' >excluir</a></td>`;
+                        tabelaCorpo.appendChild(linha);
+                    });
+                })
+        }
+    </script>
+</body>
+
+</html>

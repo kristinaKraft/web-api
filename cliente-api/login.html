@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0.555, 0.555);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .form-label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            background-color: #c548ff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #c548ff;
+        }
+
+        .link-registrar {
+            text-decoration: none;
+            color: #c548ff;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <label class="form-label" for="username">Informe nome de usuário</label>
+        <input class="form-control" type="text" id="username" placeholder="Informe nome de usuario" />
+
+        <label class="form-label" for="senha">Informe senha de usuário</label>
+        <input class="form-control" type="password" id="senha" placeholder="Informe senha de usuario" />
+
+        <div>
+            <button class="btn-primary" onclick="logar()">Logar</button>
+            <a href="./registrar.html" class="link-registrar">Registrar</a>
+        </div>
+    </div>
+
+    <script>
+        function logar() {
+            if (document.getElementById('username').value == '' || document.getElementById('senha').value == '') {
+                alert('Informe usuário e senha');
+                return;
+            }
+
+            let obj = {
+                nomeUsuario: document.getElementById('username').value,
+                senha: document.getElementById('senha').value
+            }
+
+            fetch('https://localhost:7193/api/Usuarios/login',
+                {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(obj)
+                }
+            )
+            .then(data => data.json())
+            .then(resp => localStorage.setItem('login', resp.token));
+        }
+    </script>
+</body>
+</html>
+

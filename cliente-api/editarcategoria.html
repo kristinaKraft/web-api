@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Categoria</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        div {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgb(0, 0, 0);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1, label {
+            color: #000000;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #c548ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Editar categoria</h1>
+        <label for="idcategoria">ID da Categoria:</label>
+        <input type="text" id="idcategoria" disabled>
+
+        <label for="nome">Nome da Categoria:</label>
+        <input type="text" id="nome">
+
+        <button onclick="alterar()">Salvar Alterações</button>
+        
+    </div>
+
+    <script>
+       const params = new URLSearchParams(window.location.search);
+        const idCategoria = params.get('id');
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImpvYW8iLCJyb2xlIjoiZW1wbG95ZWUiLCJuYmYiOjE3MDYxMTg3MzUsImV4cCI6MTcwNjEyNTkzNSwiaWF0IjoxNzA2MTE4NzM1fQ.7XYjCVOIk-FHmeWPscoLew1s1E3d94tXiAHCLvNRuq0'
+
+        fetch(`https://localhost:7193/api/Categoria/${idCategoria}`, 
+        {
+            headers: 
+            {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(dados => dados.json())
+        .then(resposta => {
+            document.getElementById('idcategoria').value = resposta.id;
+            document.getElementById('nome').value = resposta.nome;
+        });
+        function alterar() 
+        {
+            const novoNome = document.getElementById('nome').value;
+
+            if (novoNome.trim() === '') 
+            {
+                alert('Informe um nome válido');
+                return;
+            }
+
+            fetch(`https://localhost:7193/api/Categorias/${idCategoria}`, 
+            {
+                method: 'PUT',
+                headers: 
+                {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ nome: novoNome })
+            })
+            .then(response => 
+            {
+                if (!response.ok) 
+                {
+                    throw new Error('Erro ao salvar alterações');
+                }
+                alert('Alterações salvas com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro:', error.message);
+            });
+            
+        }
+
+    </script>
+</body>
+</html>
